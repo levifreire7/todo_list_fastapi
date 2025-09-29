@@ -1,8 +1,12 @@
+from http import HTTPStatus
+
 from fastapi import FastAPI
 
-app = FastAPI()
+from todo_list_fastapi.schemas import Message
+
+app = FastAPI(title='To Do List Project')
 
 
-@app.get('/')
+@app.get('/', status_code=HTTPStatus.OK, response_model=Message)
 def read_root():
-    return {'message': 'Olá mundo!'}
+    return Message(message='Olá, mundo!')
