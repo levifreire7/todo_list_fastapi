@@ -39,7 +39,8 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
             )
         elif db_user.email == user.email:
             raise HTTPException(
-                detail='Email already exists', status_code=HTTPStatus.CONFLICT
+                detail='Email already exists',
+                status_code=HTTPStatus.CONFLICT
             )
 
     db_user = User(

@@ -43,6 +43,37 @@ def test_create_user(client):
     }
 
 
+def test_create_user_should_return_409_username_exists__exercicio(
+        client,
+        user
+):
+    response = client.post(
+        '/users',
+        json={
+            'username': user.username,
+            'email': 'test@example.com',
+            'password': 'secret'
+        }
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Username already exists'}
+
+
+def test_create_user_should_return_409_email_exists__exercicio(client, user):
+    response = client.post(
+        '/users',
+        json={
+            'username': 'toin',
+            'email': user.email,
+            'password': 'secret'
+        }
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'Email already exists'}
+
+
 def test_read_users(client):
     response = client.get('/users/')
 
@@ -95,9 +126,9 @@ def test_get_user___exercicio(client, user):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'id': 1,
-        'username': 'Test',
-        'email': 'test@test.com',
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
     }
 
 
