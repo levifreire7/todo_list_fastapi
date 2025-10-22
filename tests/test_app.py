@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from todo_list_fastapi.schemas import UserPublic
+from todo_list_fastapi.security import create_access_token
 
 
 def test_root_deve_retornar_ola_mundo(client):
@@ -177,3 +178,29 @@ def test_get_token(client, user):
     assert response.status_code == HTTPStatus.OK
     assert token['token_type'] == 'Bearer'
     assert 'access_token' in token
+
+
+def test_get_current_user_not_found(client):
+    data = {'no-email': 'test'}
+    token = create_access_token(data)
+
+    response = client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Could not validate credentials'}
+
+
+def test_get_current_user_does_not_exists(client):
+    data = {'sub': 'not_exists@example.com'}
+    token = create_access_token(data)
+
+    response = client.delete(
+        '/users/1',
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Could not validate credentials'}
