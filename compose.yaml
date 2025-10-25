@@ -1,0 +1,25 @@
+services:
+  todo_app_database:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: todo_app_db
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "15432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  todo_app:
+    image: todo_app
+    build: .
+    entrypoint: ./entrypoint.sh
+    ports:
+      - "8000:8000"
+    depends_on:
+      - todo_app_database
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@todo_app_database:5432/todo_app_db
+
+volumes:
+  pgdata:

@@ -2,6 +2,7 @@ from dataclasses import asdict
 
 import pytest
 from sqlalchemy import select
+from sqlalchemy.exc import DataError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from todo_list_fastapi.models import Todo, User
@@ -42,7 +43,6 @@ async def test_create_todo_error(session, user: User):
     )
 
     session.add(todo)
-    await session.commit()
 
-    with pytest.raises(LookupError):
-        await session.scalar(select(Todo))
+    with pytest.raises(DataError):
+        await session.commit()
